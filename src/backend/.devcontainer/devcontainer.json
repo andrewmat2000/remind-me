@@ -1,0 +1,26 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": ["--privileged"],
+  "remoteEnv": {
+    "DEV_SERVER_URL": "http://host.docker.internal:5173",
+    "POSTGRES_USER": "pguser",
+    "POSTGRES_PASSWORD": "pgpass",
+    "POSTGRES_DB": "postgres",
+    "POSTGRES_HOST": "host.docker.internal"
+  },
+  "postAttachCommand": "dotnet restore",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "patcx.vscode-nuget-gallery",
+        "ms-dotnettools.csdevkit",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "dotnet.automaticallyCreateSolutionInWorkspace": false
+      }
+    }
+  }
+}
