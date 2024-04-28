@@ -1,28 +1,58 @@
 <script lang="ts">
+  import { peopleStore } from "$lib/stores/people-store";
   import { createEventDispatcher } from "svelte";
+  import type { Location } from "$lib/stores/location-store";
+  import type { Relation } from "$lib/stores/relation-store";
+  import type { Person } from "$lib/stores/people-store";
 
-  let show = true;
+  let showPanel = true;
+
+  let showAdd: "none" | "person" | "location" | "location-type" | "relation" =
+    "none";
 
   const dispatch = createEventDispatcher<{ addClicked: void }>();
 </script>
 
-<div id="map-panel" class={`${show ? "showed" : "collapsed"}`}>
-  {#if show}
+<div id="map-panel" class={`${showPanel ? "showed" : "collapsed"}`}>
+  {#if showPanel}
     <div>
       <br />
       <br />
       <br />
-      <h2>Упрвление</h2>
       <hr />
-      <button on:click={() => dispatch("addClicked")}>+</button>
-      <hr />
-      <h2>Фильтры</h2>
-      <hr />
-      <h2>Поиск</h2>
+      {#if showAdd == "none"}
+        <h2>Управление</h2>
+        <div>
+          Добавить контакт
+          <button on:click={() => showAdd = "person"}>+</button>
+        </div>
+        <div>
+          Добавить место
+          <button on:click={() => showAdd = "person"} disabled={$peopleStore.length <= 0}>+</button>
+        </div>
+        <div>
+          Добавить категорию места
+          <button on:click={() => showAdd = "person"}>+</button>
+        </div>
+        <div>
+          Добавить категорию связи
+          <button on:click={() => showAdd = "person"}>+</button>
+        </div>
+        <hr />
+        <h2>Фильтры</h2>
+        <hr />
+        <h2>Поиск</h2>
+      {:else}
+        {#each Object.keys(Location) as key}
+          <span>
+            
+          </span>
+        {/each}
+      {/if}
     </div>
   {/if}
-  <button on:click={() => (show = !show)}>
-    {show ? "Скрыть" : "Показать"}
+  <button on:click={() => (showPanel = !showPanel)}>
+    {showPanel ? "Скрыть" : "Показать"}
   </button>
 </div>
 
@@ -46,7 +76,7 @@
     }
   }
   .showed {
-    width: 350px;
+    width: 250px;
   }
   .collapsed {
     // width: 350px;

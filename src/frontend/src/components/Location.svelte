@@ -1,18 +1,25 @@
 <script lang="ts">
   import type { Person } from "$lib/stores/people-store";
+  import type { Location } from "$lib/stores/location-store";
   import L from "leaflet";
   import { onMount } from "svelte";
 
   export let person: Person;
   export let map: L.Map;
-  export let position: L.LatLng;
+  export let location: Location;
 
-  const circle = L.circle(position, {
-    radius: 3,
+  const markerSize = 80;
+
+  const marker = L.marker(location.position, {
+    icon: L.icon({
+      iconUrl: "/img/location-icon.svg",
+      iconSize: [markerSize, markerSize],
+      iconAnchor: [markerSize / 2, markerSize],
+    }),
   }).addTo(map);
 
   function generateContent() {
-    function createElement<T extends "div" | "input" | "button">(
+    function createElement<T extends "div" | "input" | "button" | "select">(
       type: T,
       content?: string
     ): T extends "div"
@@ -21,7 +28,9 @@
         ? HTMLInputElement
         : T extends "button"
           ? HTMLButtonElement
-          : never {
+          : T extends "select"
+            ? HTMLSelectElement
+            : never {
       const element = document.createElement(type);
       if (content != undefined) {
         element.innerHTML = content;
@@ -35,14 +44,49 @@
 
     const nameDiv = createElement("div");
 
-    nameDiv.innerHTML = `<span>Имя: </span><span>${person.firstName ?? ""} ${person.surName ?? ""} ${person.lastName ?? ""}</span>`;
+    nameDiv.innerHTML = `<span>Имя: </span><span>${person.firstName ?? ""} ${person.surName ?? ""} ${person.lastName ?? ""}`;
+
     mainDiv.appendChild(nameDiv);
 
     const typeDiv = createElement("div");
 
-    typeDiv.innerHTML = "<span>Тип места: </span><span></span>";
+    typeDiv.innerHTML = "<span>Тип места: </span>";
+
+    const typeSelect = document.createElement("select");
+
+    typeSelect.onchange = () => {};
+
+    typeDiv.appendChild(typeSelect);
 
     mainDiv.appendChild(typeDiv);
+
+    const descriptioDiv = createElement("div");
+
+    const descriptionInput = createElement("input");
+
+    descriptionInput.value = location.description ?? "";
+
+    descriptionInput.onchange = () => {
+      location.description = descriptionInput.value;
+    };
+
+    descriptioDiv.innerHTML = `<span>Описание: </span>`;
+    descriptioDiv.appendChild(descriptionInput);
+
+    mainDiv.appendChild(descriptioDiv);
+
+    const positionDiv = createElement("div", "<span>Место: </span>");
+    const positionButton = createElement("button", "редактировать");
+
+    positionButton.onclick = () => {
+      marker.closePopup();
+      dragging = true;
+      map.dragging.disable();
+    };
+
+    positionDiv.appendChild(positionButton);
+
+    mainDiv.appendChild(positionDiv);
 
     const saveButton = createElement("button", "×");
     const removeButton = createElement("button", "✓");
@@ -55,16 +99,14 @@
 
   let dragging = false;
 
-  function handleMouseDown(e: L.LeafletMouseEvent) {
-    dragging = true;
-    map.dragging.disable();
-  }
-
-  function handleMouseUp(e: L.LeafletMouseEvent) {
-    if (dragging) {
-      dragging = false;
-      map.dragging.enable();
+  function handleMouseClick(e: L.LeafletMouseEvent) {
+    if (!dragging) {
+      return;
     }
+
+    dragging = false;
+    map.dragging.enable();
+    marker.openPopup();
   }
 
   function handleMouseMove(e: L.LeafletMouseEvent) {
@@ -72,25 +114,27 @@
       return;
     }
 
-    circle.setLatLng(e.latlng);
+    marker.setLatLng(e.latlng);
   }
 
   const popup = L.popup({
     content: generateContent(),
+    offset: [0, -0.9 * markerSize],
   });
 
-  circle.bindPopup(popup);
+  marker.bindPopup(popup);
 
   onMount(() => {
-    circle.openPopup();
+    marker.openPopup();
 
     return () => {
-      circle.remove();
+      marker.remove();
     };
   });
 
-  circle.addEventListener("mousedown", handleMouseDown);
-  circle.addEventListener("mouseup", handleMouseUp);
+  map.addEventListener("click", handleMouseClick);
+  //   marker.addEventListener("mousedown", handleMouseDown);
+  //   marker.addEventListener("mouseup", handleMouseUp);
   map.addEventListener("mousemove", handleMouseMove);
 </script>
 

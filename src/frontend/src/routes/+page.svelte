@@ -26,20 +26,7 @@
   <Point {person} {map}></Point>
 {/each}
 
-<Panel
-  on:addClicked={() =>
-    peopleStore.add({
-      id: peopleStore.createEmpty().id,
-      interest: [],
-      locations: [
-        {
-          type: "init",
-          position: map.getCenter(),
-        },
-      ],
-      relations: [],
-    })}
-></Panel>
+<Panel></Panel>
 <div id="map"></div>
 <div id="center-point"></div>
 

@@ -1,15 +1,6 @@
 import { get, writable } from "svelte/store";
-
-export interface Location {
-  type: string;
-  position: L.LatLng;
-}
-
-export interface Relation {
-  type: string;
-  color: string;
-  importance: number;
-}
+import type { Relation } from "./relation-store";
+import type { Location } from "./location-store";
 
 export interface Interest {
   type: string;

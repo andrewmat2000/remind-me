@@ -8,5 +8,5 @@
 </script>
 
 {#each person.locations as location}
-  <Location position={location.position} {map} {person}></Location>
+  <Location {location} {map} {person}></Location>
 {/each}
