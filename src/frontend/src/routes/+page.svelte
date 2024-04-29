@@ -5,6 +5,7 @@
   import Panel from "../components/ui/Panel.svelte";
   import Point from "../components/Person.svelte";
   import { peopleStore } from "$lib/stores/people-store";
+  import { locationStore } from "$lib/stores/location-store";
 
   let map: L.Map;
 
@@ -26,7 +27,28 @@
   <Point {person} {map}></Point>
 {/each}
 
-<Panel></Panel>
+<Panel
+  on:addPerson={(e) => peopleStore.add(e.detail.person)}
+  on:addLocation={(e) => {
+    const person = $peopleStore.find((x) => x.id == e.detail.person.id);
+
+    if (person == undefined) {
+      return;
+    }
+
+    peopleStore.edit(() => {
+      person.locations.push({
+        position: map.getCenter(),
+        type: {
+          description: "",
+          name: "",
+        },
+        description: "",
+      });
+      return person;
+    });
+  }}
+></Panel>
 <div id="map"></div>
 <div id="center-point"></div>
 

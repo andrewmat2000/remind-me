@@ -17,7 +17,7 @@ export interface Person {
   description?: string;
   locations: Location[];
   relations: Relation[];
-  interest: Interest[];
+  interests: Interest[];
 }
 
 function createPeopleStore() {
@@ -25,7 +25,13 @@ function createPeopleStore() {
   const { subscribe, set, update } = P;
 
   function add(person: Person) {
-    update((x) => [...x, person]);
+    console.log(get(P));
+
+    console.log(person);
+    update((x) => {
+      x.push(person);
+      return x;
+    });
   }
 
   function createEmpty(): Person {
@@ -35,7 +41,7 @@ function createPeopleStore() {
 
     return {
       id: id,
-      interest: [],
+      interests: [],
       locations: [],
       relations: [],
     };

@@ -1,0 +1,11 @@
+{
+  "object-creation-form-firstName": "Имя",
+  "object-creation-form-lastName": "Фамилия",
+  "object-creation-form-surName": "Отчество",
+  "object-creation-form-description": "Описание",
+  "object-creation-form-birthday": "Дата рождения",
+  "object-creation-form-phoneNumber": "Номер телефона",
+  "object-creation-form-interests": "Интересы",
+  "object-creation-form-locations": "Локации",
+  "object-creation-form-relations": "Категории отношений"
+}
